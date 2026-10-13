@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+# Open an interactive bash terminal inside the HBase container
+if [ -t 0 ]; then
+  docker exec -it bda-hbase bash "$@"
+else
+  docker exec -i bda-hbase bash "$@"
+fi

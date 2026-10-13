@@ -1,0 +1,23 @@
+# Python virtual environments & bytecode
+.venv/
+venv/
+ENV/
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Jupyter Checkpoints
+.ipynb_checkpoints/
+
+# Metastore and Derby logs
+metastore_db/
+derby.log
+
+# Spark and Hadoop artifacts
+spark-warehouse/
+*.log
+pig_*.log
+
+# Docker extracted binaries (built into container images)
+docker-bda/pig/
+docker-bda/hive/

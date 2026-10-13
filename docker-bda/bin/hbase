@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+# Apache HBase shell launcher inside docker-bda
+if [ -t 0 ]; then
+  docker exec -it bda-hbase hbase shell "$@"
+else
+  docker exec -i bda-hbase hbase shell "$@"
+fi

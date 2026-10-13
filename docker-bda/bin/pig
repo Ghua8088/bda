@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+# Apache Pig launcher inside docker-bda
+
+HAS_EXECTYPE=false
+for arg in "$@"; do
+  if [[ "$arg" == "-x" || "$arg" == -x* ]]; then
+    HAS_EXECTYPE=true
+    break
+  fi
+done
+
+if [ "$HAS_EXECTYPE" = false ]; then
+  FINAL_ARGS=("-x" "local" "$@")
+else
+  FINAL_ARGS=("$@")
+fi
+
+if [ -t 0 ]; then
+  docker exec -it bda-hadoop pig "${FINAL_ARGS[@]}"
+else
+  docker exec -i bda-hadoop pig "${FINAL_ARGS[@]}"
+fi

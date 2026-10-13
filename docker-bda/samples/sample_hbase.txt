@@ -1,0 +1,9 @@
+# HBase shell test commands
+create 'sample_table', 'info', 'meta'
+put 'sample_table', 'row1', 'info:title', 'Big Data Analytics'
+put 'sample_table', 'row1', 'meta:status', 'Active'
+put 'sample_table', 'row2', 'info:title', 'HBase Column Store'
+put 'sample_table', 'row2', 'meta:status', 'Verified'
+scan 'sample_table'
+get 'sample_table', 'row1'
+exit

@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+# Apache Hive CLI launcher inside docker-bda
+if [ -t 0 ]; then
+  docker exec -it bda-hadoop hive "$@"
+else
+  docker exec -i bda-hadoop hive "$@"
+fi
