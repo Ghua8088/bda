@@ -1,7 +1,16 @@
 #!/usr/bin/env bash
 # Apache Hive CLI launcher inside docker-bda
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+CURRENT_DIR="$(pwd)"
+WORK_DIR="/workspace"
+
+if [[ "$CURRENT_DIR" == "$REPO_ROOT"* ]]; then
+  REL_PATH="${CURRENT_DIR#$REPO_ROOT}"
+  WORK_DIR="/workspace${REL_PATH}"
+fi
+
 if [ -t 0 ]; then
-  docker exec -it bda-hadoop hive "$@"
+  docker exec -it -w "$WORK_DIR" bda-hadoop hive "$@"
 else
-  docker exec -i bda-hadoop hive "$@"
+  docker exec -i -w "$WORK_DIR" bda-hadoop hive "$@"
 fi

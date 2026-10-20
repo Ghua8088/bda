@@ -6,13 +6,16 @@ services:
     hostname: bda-hadoop
     restart: unless-stopped
     ports:
-      - "50070:50070"  # HDFS NameNode Web UI
-      - "8088:8088"    # YARN ResourceManager Web UI
-      - "19888:19888"  # JobHistory Server UI
-      - "10000:10000"  # HiveServer2
-      - "10002:10002"  # HiveServer2 Web UI
+      - "50070:50070" # HDFS NameNode Web UI
+      - "8088:8088" # YARN ResourceManager Web UI
+      - "19888:19888" # JobHistory Server UI
+      - "10000:10000" # HiveServer2
+      - "10002:10002" # HiveServer2 Web UI
+      - "9083:9083" # Hive Metastore Thrift
     volumes:
       - ..:/workspace
+      - ./entrypoint-hadoop.sh:/entrypoint-hadoop.sh:ro
+      - hive-metastore-data:/var/lib/hive
     working_dir: /workspace
     networks:
       - bda-network
@@ -25,28 +28,7 @@ services:
     tty: true
     entrypoint:
       - /bin/bash
-      - -c
-      - |
-        /etc/bootstrap.sh
-        mkdir -p /var/lib/hive
-        if [ ! -f /usr/local/hive/conf/hive-site.xml ]; then
-          cat << 'EOF' > /usr/local/hive/conf/hive-site.xml
-        <configuration>
-          <property>
-            <name>javax.jdo.option.ConnectionURL</name>
-            <value>jdbc:derby:/var/lib/hive/metastore_db;create=true</value>
-          </property>
-          <property>
-            <name>hive.metastore.warehouse.dir</name>
-            <value>/user/hive/warehouse</value>
-          </property>
-        </configuration>
-        EOF
-          schematool -dbType derby -initSchema || true
-        fi
-        hdfs dfs -mkdir -p /user/hive/warehouse /tmp 2>/dev/null || true
-        hdfs dfs -chmod -R 777 /user/hive /tmp 2>/dev/null || true
-        tail -f /dev/null
+      - /entrypoint-hadoop.sh
 
   hbase:
     image: harisekhon/hbase:latest
@@ -55,10 +37,10 @@ services:
     hostname: bda-hbase
     restart: unless-stopped
     ports:
-      - "16010:16010"  # HBase Master Web UI
-      - "2181:2181"    # ZooKeeper
-      - "18080:8080"   # HBase REST API (mapped to 18080 to avoid conflict)
-      - "8085:8085"    # HBase Thrift
+      - "16010:16010" # HBase Master Web UI
+      - "2181:2181" # ZooKeeper
+      - "18080:8080" # HBase REST API (mapped to 18080 to avoid conflict)
+      - "8085:8085" # HBase Thrift
     volumes:
       - ..:/workspace
     working_dir: /workspace
@@ -68,3 +50,7 @@ services:
 networks:
   bda-network:
     driver: bridge
+
+volumes:
+  hive-metastore-data:
+    driver: local
